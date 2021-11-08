@@ -16,7 +16,7 @@ void hmac_interactive_wizard(){
 
     char *message_text=NULL;
     if (get_inputtext(&message_text)==0){
-        printf("No message provided,exit.\n");
+        fprintf(stderr,"No message provided,exit.\n");
         return;
     }
 
@@ -39,6 +39,7 @@ void hmac_interactive_wizard(){
 }
 
 void print_detail(BYTE *data,unsigned int *size){
+    if (size==NULL||*size<=0)   return;
     printf("\n==================\n");
     printf("HMAC Length: %d\n",*size);
     printf("HMAC Digist: ");

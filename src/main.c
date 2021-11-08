@@ -8,7 +8,7 @@
 #include <stdbool.h>
 
 static char doc[] = "sodiage -- encrypt/decrypt tool use libsodium and openssl.";
-static char args_doc[] = "[-adefko?]";
+static char args_doc[] = "[-edkfaioh]";
 
 static struct argp_option options[] = { 
     { "encrypt", 'e', 0,            0, "Encrypt a given file."},
@@ -64,10 +64,19 @@ int main(int argc,char *argv[]){
         fprintf(stderr,"Libsodium couldn't be initialized, it is not safe to use!\n");
         exit(EXIT_FAILURE);
     }
+#if defined(__linux__) && defined(RNDGETENTCNT)
+    check_linux_random_backend();
+#endif
+
     argp_parse(&argp, argc, argv, 0, 0, &config_arguments);
     
-    if (config_arguments.mode==2){
-        hmac_interactive_wizard();
-        exit(EXIT_SUCCESS);
+    switch (config_arguments.mode){
+        case 1:encrypt_init();break;
+        case 2:hmac_interactive_wizard();break;
+        case 3:decrypt_init();break;
+        default:fprintf(stderr,"Invalid usage.\n");
+                exit(EXIT_FAILURE);
     }
+
+    exit(EXIT_SUCCESS);
 }

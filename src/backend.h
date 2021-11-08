@@ -5,15 +5,22 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
 
 #include "third_part/base64.h"
 #include "utils.h"
 
 #define BYTE unsigned char 
+
+#if defined(__linux__)
+    #include <fcntl.h>
+    #include <unistd.h>
+
+    #include <sys/ioctl.h>
+    #include <sys/types.h>
+    #include <sys/stat.h>
+
+    #include <linux/random.h>
+#endif
 
 /* store globel file informations */
 static struct {
@@ -65,5 +72,10 @@ static struct {
     int ascii;
     const char *key,*in,*out;
 } config_arguments;
+
+/* check /dev/random , only check once */
+void check_linux_random_backend();
+
+int key_file_process();
 
 #endif
