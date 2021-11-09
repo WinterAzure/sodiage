@@ -70,6 +70,23 @@ int main(int argc,char *argv[]){
 
     argp_parse(&argp, argc, argv, 0, 0, &config_arguments);
     
+    FILE *target_fp;
+    struct head_t *f_head=NULL;
+    if (config_arguments.in!=NULL){
+        strcpy(file_info_globel.file_name,config_arguments.in);
+        file_info_globel.file_size_total=get_file_size(config_arguments.in);
+        if ((target_fp=fopen(config_arguments.in,"rb"))==NULL){
+            fprintf(stderr,"Unable to open file %s.\n",config_arguments.in);
+            exit(EXIT_FAILURE);
+        }
+        if (config_arguments.mode==2)
+            if ((file_info_globel.file_head=read_file_header(target_fp,&f_head))==NULL){
+                fprintf(stderr,"Invalid file head.\n");
+                exit(EXIT_FAILURE);
+            }
+        fclose(target_fp);
+    }
+
     switch (config_arguments.mode){
         case 1:encrypt_init();break;
         case 2:hmac_interactive_wizard();break;

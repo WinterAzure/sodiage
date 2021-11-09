@@ -21,10 +21,11 @@ int getpassword(const char *prompt,char *password_save_buff){
 }
 
 size_t get_inputtext(char **message_text){
-    printf("Input message:\n");
     *message_text=NULL;
     char *message_line=NULL;
     size_t size=0,total_size=0;
+
+    printf("Input message:\n");
     fgetc(stdin);
     while (getline(&message_line,&size,stdin)){
         if (strcmp(message_line,"\n")==0)   break;
@@ -38,12 +39,14 @@ size_t get_inputtext(char **message_text){
 
 const char *generate_password_random(int size,char **target){
     if (size<=0)    return NULL;
+
     BYTE *random_buff=sodium_malloc(size*2);
+    char *ptr_password=*target;
+    int counter=0;    
+
     CHECK_ALLOC(random_buff);
     randombytes(random_buff,size*2);
     *target=sodium_malloc(size*sizeof(char));
-    char *ptr_password=*target;
-    int counter=0;
     for (BYTE *ptr=random_buff;ptr!=random_buff+size;ptr++){
         if (*ptr>=33 && *ptr<=126){
             *ptr_password=*ptr;
@@ -93,4 +96,11 @@ void print_as_base64(const char *start,const void *data,size_t data_size,const c
         return;
     }
     printf("%s\n%s\n%s\n",start,base64_encoded_string,end);
+}
+
+const size_t get_file_size(const char *file_name){
+    struct stat f_stat;
+    if (stat(file_name,&f_stat)!=0)
+        return 0;
+    return f_stat.st_size;
 }

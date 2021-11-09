@@ -7,3 +7,4 @@ void encrypt_init(){
         /* process file */
     }
 }
+

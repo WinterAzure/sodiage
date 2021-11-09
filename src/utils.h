@@ -6,7 +6,7 @@
 #include "backend.h"
 
 #define CHECK_ALLOC(X) if ((X)==NULL){              \
-    fprintf(stderr,"Unable to alloc memory!\n");    \
+    fprintf(stderr,"Unable to alloc memory at %p!\n",X);    \
     exit(EXIT_FAILURE);                             \
 }
 
@@ -30,5 +30,7 @@ const char *generate_password_random(int size,char **target);
 const char *generate_password_meaningful(int word_size,char dlm,char **target);
 
 void print_as_base64(const char *start,const void *data,size_t data_size,const char *end);
+
+const size_t get_file_size(const char *file_name);
 
 #endif
