@@ -34,8 +34,9 @@ static struct {
  *  file header struct --   6 bytes information (unsigned char) +
  *                          8 byte pointer to salt +
  *                          8 byte pointer to nonce = 22 bytes.
- *  @param v_head:  4 bit file type : 
+ *  @param v_head:  4 bit file version : now 0b1111
  *                  2 bit block size : (block size + 1)*2048 bytes
+ *                                      if block size is 0,then the entire file is a block.
  *                  2 bit key length (0b00=32U(default),0b01=64U)
  *  @param v_kdf:   2 bit kdf type : [0b00=argon2i13;0b01=argon2id13;0b10=scrypts208sha256]
  *                  3 bit operation times : (operation times)*2U
@@ -120,5 +121,8 @@ int key_file_process(const char *key_file,
                      BYTE        kdf_config,
                      size_t      result_length,
                      BYTE       *result);
+
+
+int pow(int a,int b); 
 
 #endif
