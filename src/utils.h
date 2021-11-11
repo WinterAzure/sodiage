@@ -15,8 +15,9 @@ inline int unsigned_addition_check(unsigned int a,unsigned int b){
     return c>a;
 }
 
-int getpassword(const char *prompt,char *password_save_buff);
+int getpassword(const char *prompt,char **password_save_buff);
 
+/** @return strlen(*message_text) */
 size_t get_inputtext(char **message_text);
 
 const char *generate_password_random(int size,char **target);

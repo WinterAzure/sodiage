@@ -9,7 +9,7 @@
 #include "third_part/base64.h"
 #include "utils.h"
 
-#define BYTE unsigned char 
+#define BYTE int8_t
 
 #if defined(__linux__)
     #include <fcntl.h>
@@ -29,20 +29,23 @@ static struct {
     off_t           file_size_total;
 } file_info_globel;
 
-
 /** 
- *  file header struct --   6 bytes information (unsigned char) +
+ *  file header struct --   8 bytes information (unsigned char) +
  *                          8 byte pointer to salt +
- *                          8 byte pointer to nonce = 22 bytes.
+ *                          8 byte pointer to nonce = 24 bytes.
  *  @param v_head:  4 bit file version : now 0b1111
- *                  2 bit block size : (block size + 1)*2048 bytes
- *                                      if block size is 0,then the entire file is a block.
- *                  2 bit key length (0b00=32U(default),0b01=64U)
- *  @param v_kdf:   2 bit kdf type : [0b00=argon2i13;0b01=argon2id13;0b10=scrypts208sha256]
+ *                  2 bit block size :  0b00 : entire file;
+ *                                      0b01 : 1024 bytes;
+ *                                      0b10 : 2048 bytes;
+ *                                      0b11 : 4096 bytes.
+ *                  2 bit key length    0b00 : 32U;
+ *                                      0b01 : 64U.
+ *  @param v_kdf:   2 bit kdf type : 0b00=argon2i13;
+ *                                   0b01=argon2id13;
+ *                                   0b10=scrypts208sha256.
  *                  3 bit operation times : (operation times)*2U
  *                  3 bit memory limit : (memory limit)*100000000*2
- *  @param v_salt:  6 bit base number
- *                  2 bit mask. caculte: (base number)*(2**(mask+1))  
+ *  @param v_salt:  8 bit salt length. calculate: 2**v_salt. 
  *  @param v_nonce: 1 bit need nonce (0=no,1=yes),if is 0,v_nonce should be 0x00
  *                  1 bit is AEAD (0=no,1=yes),if is 0,v_mac should be 0x00
  *                  6 bit multiplier. length caculate : 8*(multiplier)
@@ -53,11 +56,13 @@ static struct {
  *                  6 bit algorithm index (see below)
  *  @param ptr_salt: pointer to salt array
  *  @param ptr_nce : pointer to nonce array
+ *  @param ptr_mac : pointer to mac.
  **/
 struct head_t {
     BYTE v_head,v_kdf,v_salt,v_nonce,v_mac,v_alg;
     unsigned char *ptr_salt;
     unsigned char *ptr_nce;
+    unsigned char *ptr_mac;
 };
 
 /** read_file_header -- read encrypt file header
@@ -67,8 +72,10 @@ struct head_t {
  **/
 struct head_t *read_file_header(FILE *fp,struct head_t **head_ptr);
 
-enum V_KLEN {L_32=0x00,L_64=0x01};
-enum V_KDF  {ARGON_2I13=0b00,ARGON_2ID13=0b01,SCRYPT_S208S256=0x10};
+enum V_BLOCK_SIZE   {V_BS_WHOLE=0b00,V_BS_1024=0b01,V_BS_2048=0b10,V_BS_4096=0b11};
+enum V_KEY_SIZE     {V_KS_32U=0b00,V_KS_64U=0b01};
+enum V_KDF          {ARGON_2I13=0b00,ARGON_2ID13=0b01,SCRYPT_S208S256=0x10};
+enum V_ENCALG       {V_ENC_XSalsa20=0b00};
 
 /** config struct -- store command line configure
  * @param mode [int]        : 1=encrypt,2=decrypt,3=hmac

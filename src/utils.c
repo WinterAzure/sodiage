@@ -1,7 +1,7 @@
 #include "utils.h"
 #include "dictionary.h"
 
-int getpassword(const char *prompt,char *password_save_buff){
+int getpassword(const char *prompt,char **password_save_buff){
     struct termios term;
     printf("%s",prompt);
     if (tcgetattr(fileno(stdin), &term)<0)
@@ -9,12 +9,12 @@ int getpassword(const char *prompt,char *password_save_buff){
     term.c_lflag &= ~ECHO;
     if (tcsetattr(fileno(stdin), 0, &term)<0)
         return -1;
-    password_save_buff=sodium_malloc(256*sizeof(char));
-    if (password_save_buff==NULL)
+    *password_save_buff=sodium_malloc(256*sizeof(char));
+    if (*password_save_buff==NULL)
         return -1;
-    fgets(password_save_buff, 256*sizeof(char), stdin);
-    if (password_save_buff[strlen(password_save_buff)+1]=='\n')
-        password_save_buff[strlen(password_save_buff)+1]='\0';
+    fgets(*password_save_buff, 256*sizeof(char), stdin);
+    if (*password_save_buff[strlen(*password_save_buff)+1]=='\n')
+        *password_save_buff[strlen(*password_save_buff)+1]='\0';
     term.c_lflag |= ECHO;
     tcsetattr(fileno(stdin), 0, &term);
     return 0;

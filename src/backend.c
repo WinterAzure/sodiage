@@ -90,8 +90,8 @@ int key_file_process(const char *key_file,size_t process_bytes,BYTE kdf_config,
 
 struct head_t *read_file_header(FILE *fp,struct head_t **head_ptr){
     /* file header is always 22 bytes,so just read it */
-    unsigned char *raw_buff=calloc(22,1);
-    if (fread(raw_buff,22,1,fp)!=22){
+    unsigned char *raw_buff=calloc(24,1);
+    if (fread(raw_buff,24,1,fp)!=24){
         fprintf(stderr,"Invalid file.File too short.\n");
         return NULL;
     }
