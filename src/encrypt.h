@@ -29,7 +29,7 @@ void encrypt_init();
 int encrypt_user_input();
 
 /* if any packer function found an error,this struct will be modified. */
-struct {
+static struct {
     int have_error;
     char *message;
 }error_packer;
@@ -53,6 +53,8 @@ static const BYTE v_alg_packer   (int algorithm_type,int security_level,int algo
 struct head_t *encrypt_filehead_packer(struct head_t *target,unsigned char *ptr_salt,
                                         unsigned char *ptr_nonce,BYTE config_bytes[6]);
 
-int encrypt_buff(BYTE *raw,size_t size,const struct head_t *head,BYTE **target_buff);
+/* encrypt given buff , struct head_t for get nonce */
+int encrypt_buff(BYTE *raw,size_t size,const struct head_t *head,BYTE **target_buff,BYTE *key,BYTE *nonce);
+
 
 #endif

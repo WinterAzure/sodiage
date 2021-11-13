@@ -21,12 +21,12 @@ void hmac_interactive_wizard(){
     }
 
     char *password_buff;
-    if (getpassword("Enter password[Max 256 chars]: ",password_buff)!=0){
+    if (getpassword("Enter password[Max 256 chars]: ",&password_buff)!=0){
         fprintf(stderr,"Unable to get password.\n");
         return;
     }
 
-    BYTE output[EVP_MAX_MD_SIZE]={0};
+    unsigned char output[EVP_MAX_MD_SIZE]={0};
     unsigned int length_output=0;
     CHECK_ALLOC(output);
     HMAC_CTX *ctx=HMAC_CTX_new();

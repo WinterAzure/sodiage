@@ -9,7 +9,7 @@
 #include "third_part/base64.h"
 #include "utils.h"
 
-#define BYTE int8_t
+#define BYTE unsigned char 
 
 #if defined(__linux__)
     #include <fcntl.h>
@@ -24,7 +24,8 @@
 
 /* store globel file informations */
 static struct {
-    const char      *file_name;
+    char      *file_name;
+    char      *new_file_name;
     struct head_t   *file_head;
     off_t           file_size_total;
 } file_info_globel;
@@ -45,10 +46,10 @@ static struct {
  *                                   0b10=scrypts208sha256.
  *                  3 bit operation times : (operation times)*2U
  *                  3 bit memory limit : (memory limit)*100000000*2
- *  @param v_salt:  8 bit salt length. calculate: 2**v_salt. 
+ *  @param v_salt:  8 bit salt length. By now it will be crypto_pwhash_SALTBYTES
  *  @param v_nonce: 1 bit need nonce (0=no,1=yes),if is 0,v_nonce should be 0x00
  *                  1 bit is AEAD (0=no,1=yes),if is 0,v_mac should be 0x00
- *                  6 bit multiplier. length caculate : 8*(multiplier)
+ *                  6 bit multiplier. By now it will be crypto_secretbox_NONCEBYTES
  *  @param v_mac:   4 bit multiplier. length caculate : 16*(multiplier)
  *                  4 bit backup (not used yet)
  *  @param v_alg:   1 bit algorithm type (0=block alg,1=stream alg)
@@ -105,7 +106,7 @@ void check_linux_random_backend();
  * @param result [unsigned char *]          : location to save kdf result
  * @return int : 0=succeed,1=failed
  **/
-int kdf(const BYTE *raw_key,
+int kdf(const char *raw_key,
         size_t raw_key_length,
         BYTE *salt_buff,
         size_t salt_length,
@@ -128,8 +129,5 @@ int key_file_process(const char *key_file,
                      BYTE        kdf_config,
                      size_t      result_length,
                      BYTE       *result);
-
-
-int pow(int a,int b); 
 
 #endif

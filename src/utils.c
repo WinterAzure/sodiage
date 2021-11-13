@@ -20,6 +20,22 @@ int getpassword(const char *prompt,char **password_save_buff){
     return 0;
 }
 
+const char *get_new_file_name(){
+    printf("Input new file name(Empty for auto geneate,max 128): ");
+    fgets(file_info_globel.new_file_name,128,stdin);
+    if (strcmp(file_info_globel.new_file_name,"\n")!=1)
+        return file_info_globel.new_file_name;
+    /* auto append ".encrypted" or "encrypted file" */
+    if (file_info_globel.file_name==NULL){
+        printf("File saved as 'encrypted_file'");
+        strcpy(file_info_globel.new_file_name,"encrypted_file");
+        return file_info_globel.new_file_name;
+    }
+    strcpy(file_info_globel.new_file_name,file_info_globel.file_name);
+    strcat(file_info_globel.new_file_name,".encrypted");
+    return file_info_globel.new_file_name;
+}
+
 size_t get_inputtext(char **message_text){
     *message_text=NULL;
     char *message_line=NULL;
@@ -103,4 +119,17 @@ const size_t get_file_size(const char *file_name){
     if (stat(file_name,&f_stat)!=0)
         return 0;
     return f_stat.st_size;
+}
+
+int write_file_header(const struct head_t *head,FILE *fp){
+    rewind(fp);
+    if (fp==NULL||head==NULL)   return 1;
+    fwrite(head,sizeof(struct head_t),1,fp);
+    return 1;
+}
+
+int write_buff(const unsigned char *buff,const int buff_length,FILE *fp){
+    if (buff==NULL||fp==NULL||buff_length<=0)   return 1;
+    fwrite(buff,buff_length,1,fp);
+    return 1;
 }

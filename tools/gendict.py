@@ -43,7 +43,7 @@ def geneate_header_file() -> None:
     header_file_fp=open('../src/dictionary.h','w')
     header_file_fp.write(F_HEADER)
     for word in WORDS_CHOOSED:
-        header_file_fp.write('{"'+word+'"},\n')
+        header_file_fp.write('"'+word+'",\n')
     header_file_fp.seek(header_file_fp.tell()-2)
     header_file_fp.write(F_TAIL)
     header_file_fp.flush()

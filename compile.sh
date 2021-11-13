@@ -11,11 +11,11 @@ if [ -z $1 ]; then
 fi
 
 if [ $1 = vscode ];then
-    SOURCES=$(ls ../src/*.c)
+    SOURCES=$(ls ../src/*.c ../src/third_part/*.c)
     $CC -g $SOURCES -o ../build/$EXECABLE_NAME $(pkg-config --libs libsodium) $EXTRA_LINK
     exit
 else
-    SOURCES=$(ls ./src/*.c)
+    SOURCES=$(ls ./src/*.c ./src/third_part/*.c)
 fi
 
 if [ $1 = debug ]; then

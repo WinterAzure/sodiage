@@ -5,6 +5,8 @@
 
 #include "backend.h"
 
+struct head_t;
+
 #define CHECK_ALLOC(X) if ((X)==NULL){              \
     fprintf(stderr,"Unable to alloc memory at %p!\n",X);    \
     exit(EXIT_FAILURE);                             \
@@ -20,6 +22,9 @@ int getpassword(const char *prompt,char **password_save_buff);
 /** @return strlen(*message_text) */
 size_t get_inputtext(char **message_text);
 
+/* old name is from file-info_globel */
+const char *get_new_file_name();
+
 const char *generate_password_random(int size,char **target);
 
 /** generate_password_meaningful -- get password of english words.
@@ -33,5 +38,9 @@ const char *generate_password_meaningful(int word_size,char dlm,char **target);
 void print_as_base64(const char *start,const void *data,size_t data_size,const char *end);
 
 const size_t get_file_size(const char *file_name);
+
+/* file write operation */
+int write_file_header(const struct head_t *head,FILE *fp);
+int write_buff(const unsigned char *buff,const int buff_length,FILE *fp);
 
 #endif

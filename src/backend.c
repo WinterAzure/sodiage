@@ -19,7 +19,7 @@ void check_linux_random_backend(){
 
 #endif
 
-int kdf(const BYTE *raw_key,size_t raw_key_length,
+int kdf(const char *raw_key,size_t raw_key_length,
         BYTE *salt_buff,size_t salt_length,BYTE config,BYTE *result,size_t result_length){
     if (raw_key==NULL||salt_buff==NULL)     return 1;
     if (raw_key_length<=0||salt_length<=0||result_length<=0)  return 1;
@@ -77,7 +77,8 @@ int key_file_process(const char *key_file,size_t process_bytes,BYTE kdf_config,
         salt_length=file_size;
         fread(salt_data,file_size,1,fp_keyfile);
     }
-    if (kdf(raw_data,process_bytes,salt_data,salt_length,kdf_config,result,result_length)!=0){
+    /* due to libsodium,only string can be kdf,try to generate strings from file */
+    if (kdf((const char *)raw_data,process_bytes,salt_data,salt_length,kdf_config,result,result_length)!=0){
         fprintf(stderr,"Unable to process key file.\n");
         return 1;
     }
@@ -95,13 +96,6 @@ struct head_t *read_file_header(FILE *fp,struct head_t **head_ptr){
         fprintf(stderr,"Invalid file.File too short.\n");
         return NULL;
     }
-}
-
-int pow(int a,int b){
-    int result=a;
-    for (int i=0;i<b;i++){
-        a*=a;
-    }
-    if (result<a)   return -1;  /* overflow */
-    return result;
+    // TODO
+    return NULL;
 }
