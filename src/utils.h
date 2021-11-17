@@ -1,46 +1,25 @@
 #ifndef __UTILS_H
 #define __UTILS_H
 
+#include "common.h"
+
 #include <termios.h>
 
-#include "backend.h"
-
-struct head_t;
-
-#define CHECK_ALLOC(X) if ((X)==NULL){              \
-    fprintf(stderr,"Unable to alloc memory at %p!\n",X);    \
-    exit(EXIT_FAILURE);                             \
-}
-
-inline int unsigned_addition_check(unsigned int a,unsigned int b){
-    unsigned int c=a+b;
-    return c>a;
-}
-
-int getpassword(const char *prompt,char **password_save_buff);
-
-/** @return strlen(*message_text) */
-size_t get_inputtext(char **message_text);
-
-/* old name is from file-info_globel */
-const char *get_new_file_name();
-
-const char *generate_password_random(int size,char **target);
-
-/** generate_password_meaningful -- get password of english words.
- *  example output: hello-pig-yes-mother-oxygen
- *  @param word_size size of words
- *  @param dlm delimiter such as '-',must be visiable(ascii 33-126)
- *  @param target buff to save the password.
+/** readpassword(char **)
+ *  read password from stdin and store it to alloced buff
+ *  @param buff : should be null
  **/
-const char *generate_password_meaningful(int word_size,char dlm,char **target);
+size_t readpassword(char **buff);
 
-void print_as_base64(const char *start,const void *data,size_t data_size,const char *end);
+/** unsigned char *default_kdf(char *)
+ *  kdf use libsodium's default settings.
+ *  length is for xchacha20poly1305
+ **/
+unsigned char *default_kdf(char *password_raw,const unsigned char *salt_buff);
 
-const size_t get_file_size(const char *file_name);
+/* get new file name. It will modify configment_st */
+const char *get_newfile_name();
 
-/* file write operation */
-int write_file_header(const struct head_t *head,FILE *fp);
-int write_buff(const unsigned char *buff,const int buff_length,FILE *fp);
+char *strip(char *raw);
 
 #endif
