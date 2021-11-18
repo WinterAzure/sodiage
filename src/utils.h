@@ -22,4 +22,6 @@ const char *get_newfile_name();
 
 char *strip(char *raw);
 
+void hex_print(const unsigned char *buff,size_t size);
+
 #endif

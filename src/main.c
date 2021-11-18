@@ -45,6 +45,14 @@ int main(int argc,char *argv[]){
         exit(EXIT_FAILURE);
     }
     argp_parse(&argp, argc, argv, 0, 0, &config_arguments);
+#ifdef DEBUG
+    printf("Arguments:: Raw File:%s\n",config_arguments.raw_file);
+    printf("arguments:: mode %d\n",config_arguments.mode);
+#endif
+    if (config_arguments.raw_file==NULL){
+        printf("No file provided.\n");
+        exit(EXIT_FAILURE);
+    }
     switch (config_arguments.mode){
         case ENCRYPT: encrypt_init();break;
         case DECRYPT: decrypt_init();break;

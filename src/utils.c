@@ -43,7 +43,7 @@ const char *get_newfile_name(){
         strcat(config_arguments.output_file,".encrypted");
         return config_arguments.output_file;
     }
-    strip(newname);
+    strcpy(newname,strip(newname));
     config_arguments.output_file=malloc(strlen(newname)+1);
     strcpy(config_arguments.output_file,newname);
     return config_arguments.output_file;
@@ -51,9 +51,13 @@ const char *get_newfile_name(){
 
 char *strip(char *raw){
     size_t len=strlen(raw);
-    while(iscntrl(raw[len - 1])) --len;
-    while(*raw && iscntrl(*raw)){
-        ++raw;--len;
-    }
+    while(raw[len - 1]=='\n') --len;
     return strndup(raw,len);
+}
+
+void hex_print(const unsigned char *buff,size_t size){
+    if (size<=0)    return;
+    for (size_t i=0;i<size;i++){
+        printf("%02X",buff[i]);
+    }
 }

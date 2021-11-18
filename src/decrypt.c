@@ -3,10 +3,12 @@
 #include "decrypt.h"
 
 void decrypt_init(){
+#ifdef DEBUG
+    printf("Decrypt::Init\n");
+#endif
     /* read salt for kdf */
     FILE *in_fp,*out_fp;
     unsigned char *salt_kdf=malloc(crypto_pwhash_SALTBYTES);
-    unsigned char key[crypto_secretstream_xchacha20poly1305_KEYBYTES]={0};
     char *password_buff=NULL;
     
     if ((in_fp=fopen(config_arguments.raw_file,"rb"))==NULL){
@@ -26,7 +28,16 @@ void decrypt_init(){
     }
     unsigned char *key_enc=default_kdf(password_buff,salt_kdf);
     /* decrypt */
-    if (default_decrypt(in_fp,out_fp,key)!=0){
+#ifdef DEBUG
+    printf("Encrypt::Key Raw:%s\n",password_buff);
+    printf("Encrypt::Key:");
+    hex_print(key_enc,crypto_secretstream_xchacha20poly1305_KEYBYTES);
+    printf("\n");
+    printf("Encrypt::Salt:");
+    hex_print(salt_kdf,crypto_pwhash_SALTBYTES);
+    printf("\n");
+#endif
+    if (default_decrypt(in_fp,out_fp,key_enc)!=0){
         ERROR("Unable to decrypt.\n");
         exit(EXIT_FAILURE);
     }

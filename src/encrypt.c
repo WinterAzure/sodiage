@@ -28,8 +28,10 @@ int encrypt_default(FILE *out_fd,FILE *in_fd,
 
 
 void encrypt_init(){
+#ifdef DEBUG
+    printf("Encrypt::Init\n");
+#endif
     /* get password and kdf it */
-    unsigned char key[crypto_secretstream_xchacha20poly1305_KEYBYTES]={0};
     unsigned char salt[crypto_pwhash_SALTBYTES]={0};
     char *password_buff=NULL;
     if (readpassword(&password_buff)==-1){
@@ -42,6 +44,15 @@ void encrypt_init(){
         ERROR("Unable to kdf key,exit......\n");
         exit(EXIT_FAILURE);
     }
+#ifdef DEBUG
+    printf("Encrypt::Key Raw:%s\n",password_buff);
+    printf("Encrypt::Key:");
+    hex_print(key_enc,crypto_secretstream_xchacha20poly1305_KEYBYTES);
+    printf("\n");
+    printf("Encrypt::Salt:");
+    hex_print(salt,crypto_pwhash_SALTBYTES);
+    printf("\n");
+#endif
     /* get file descriptor */
     FILE *in_fp,*out_fp;
     if ((in_fp=fopen(config_arguments.raw_file,"rb"))==NULL){
